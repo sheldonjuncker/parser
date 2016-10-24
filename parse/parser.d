@@ -1,4 +1,5 @@
 module parse.parser;
+import parse.node;
 import lex.lexer;
 import lex.token;
 import std.stdio;

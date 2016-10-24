@@ -1,5 +1,6 @@
 import std.stdio;
 import parse.parser;
+import parse.node;
 
 int main(string[] argv)
 {
