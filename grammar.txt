@@ -1,0 +1,31 @@
+program
+	:	statements
+
+statements
+	:	statements statements
+	|	ε
+
+statement
+	:	block
+	:	if
+	:	while
+	:	expr ';'
+
+block
+	:	'{' statements '}'
+
+if
+	:	IF '(' expr ')' stmt
+
+while
+	:	WHILE '(' expr ')' stmt
+
+expr
+	:	ID '=' expr
+	|	expr (AND|OR|XOR) expr
+	|	expr (EQ|LT|GT|LTE|GTE) expr
+	|	'!' expr
+	|	expr ('+'|'-') expr
+	|	expr ('*'|'/'|'%') expr
+	|	ID
+	|	NUM

@@ -1,0 +1,1 @@
+rdmd -debug -w -g -I/D/projects/lexer main.d
