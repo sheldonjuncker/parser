@@ -9,6 +9,9 @@ class Parser
 	///The lexer object
 	Lexer lexer;
 
+	///The current token's' index
+	int tokenIndex;
+
 	/**
 	* Lexes the input into tokens.
 	*/
