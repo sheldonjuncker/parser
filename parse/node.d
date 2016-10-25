@@ -77,3 +77,43 @@ class XorNode : BinaryNode
 		super(left, right);
 	}	
 }
+
+class EqualsNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class GtNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class LtNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class GteNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class LteNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
