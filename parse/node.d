@@ -133,3 +133,27 @@ class SubNode : BinaryNode
 		super(left, right);
 	}	
 }
+
+class MulNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class DivNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class ModNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}

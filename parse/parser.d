@@ -567,7 +567,58 @@ class Parser
 	*/
 	Node prec3()
 	{
-		return null;
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "expression";
+
+		try
+		{
+			//Get left hand side
+			Node left = prec4();
+
+			if(left is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
+			}
+
+			//While we're looking at *, /, % keep going
+			while(accept(TokenType.Star) || accept(TokenType.Slash) || accept(TokenType.Percent))
+			{
+				//Get the operator and eat token
+				Token op = token();
+				next();
+
+				//Read right hand side of expression
+				Node right = prec4();
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
+				}
+
+				//Build expression
+				if(op.type == TokenType.Star)
+					return new MulNode(left, right);
+				else if(op.type == TokenType.Slash)
+					return new DivNode(left, right);
+				else
+					return new ModNode(left, right);
+			}
+
+			//Only a left hand side
+			return left;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
 	}
 
 	/**
