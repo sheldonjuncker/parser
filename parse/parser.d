@@ -206,8 +206,6 @@ class Parser
 		//Save location state
 		int save = tokenIndex;
 
-		//Use a do-while so that we can break at any point
-		//to restore the location and return null.
 		try
 		{
 			//Match a '{'
@@ -250,15 +248,45 @@ class Parser
 		//Save location state
 		int save = tokenIndex;
 
-		//Use a do-while so that we can break at any point
-		//to restore the location and return null.
+		//The location to use for error reporting
+		string where = "if statement";
+
 		try
 		{
-			
+			//Match if
+			if(!match(TokenType.If))
+			{
+				throw new ParseException(new ParseError(where, token(), "if"));
+			}
+
+			//Match (
+			if(!match(TokenType.Lprn))
+			{
+				throw new ParseException(new ParseError(where, token(), "("));
+			}
+
+			//Look for condition expression
+			Node cond = expr();
+			if(cond is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "conditional expression"));
+			}
+
+			//Match )
+			if(!match(TokenType.Rprn))
+			{
+				throw new ParseException(new ParseError(where, token(), ")"));
+			}
+
+			//Look for statement
+			Node stmt = statement();
+			if(stmt is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "a statement"));
+			}
 
 			//All good!
-			//return new IfNode(cond, stmt);
-			return null;
+			return new IfNode(cond, stmt);
 		}
 
 		catch(ParseException error)
