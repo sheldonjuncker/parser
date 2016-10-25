@@ -508,7 +508,57 @@ class Parser
 	*/
 	Node prec2()
 	{
-		return null;
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "expression";
+
+		try
+		{
+			//Get left hand side
+			Node left = prec3();
+
+			if(left is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
+			}
+
+			//While we're looking at +, - keep going
+			while(accept(TokenType.Plus) || accept(TokenType.Minus))
+			{
+				//Get the operator and eat token
+				Token op = token();
+				next();
+
+				//Read right hand side of expression
+				Node right = prec3();
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
+				}
+
+				//Build expression
+				if(op.type == TokenType.Plus)
+					return new AddNode(left, right);
+
+				else
+					return new SubNode(left, right);
+			}
+
+			//Only a left hand side
+			return left;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
 	}
 
 	/**

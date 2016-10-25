@@ -117,3 +117,19 @@ class LteNode : BinaryNode
 		super(left, right);
 	}	
 }
+
+class AddNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
+class SubNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
