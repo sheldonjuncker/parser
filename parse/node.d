@@ -29,3 +29,15 @@ class IfNode : Node
 		this.stmt = stmt;
 	}
 }
+
+class WhileNode : Node
+{
+	Node cond;
+	Node stmt;
+
+	this(Node cond, Node stmt)
+	{
+		this.cond = cond;
+		this.stmt = stmt;
+	}
+}

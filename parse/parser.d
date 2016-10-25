@@ -307,7 +307,59 @@ class Parser
 	*/
 	Node whileStatement()
 	{
-		return null;
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "while statement";
+
+		try
+		{
+			//Match while
+			if(!match(TokenType.While))
+			{
+				throw new ParseException(new ParseError(where, token(), "while"));
+			}
+
+			//Match (
+			if(!match(TokenType.Lprn))
+			{
+				throw new ParseException(new ParseError(where, token(), "("));
+			}
+
+			//Look for condition expression
+			Node cond = expr();
+			if(cond is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "conditional expression"));
+			}
+
+			//Match )
+			if(!match(TokenType.Rprn))
+			{
+				throw new ParseException(new ParseError(where, token(), ")"));
+			}
+
+			//Look for statement
+			Node stmt = statement();
+			if(stmt is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "a statement"));
+			}
+
+			//All good!
+			return new WhileNode(cond, stmt);
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
 	}
 
 	/**
