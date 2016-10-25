@@ -3,7 +3,12 @@ import parse.node;
 import lex.lexer;
 import lex.token;
 import std.stdio;
+import std.exception;
 
+/**
+* This class represents a parse error.
+* It stores the type error, the expected token, and what was found instead.
+*/
 class ParseError
 {
 	///The location of the error (in expression, if statement, etc.)
@@ -14,6 +19,40 @@ class ParseError
 
 	///A string representing what was expected.
 	string expected; 
+
+	/**
+	* Convert to string for use in error reporting.
+	*/
+	override string toString()
+	{
+		string message;
+		message = "Unexpected " ~ found.lexeme ~ " in " ~ where ~ " expected " ~ expected;
+		return message;
+	}
+
+	/**
+	* Constructor with initialization list.
+	* @param where The location of the error
+	* @param found The invalid token
+	* @param expected The thing expected
+	*/
+	this(string where, Token found, string expected)
+	{
+		this.where = where;
+		this.found = found;
+		this.expected = expected;
+	}
+}
+
+class ParseException : Exception
+{
+	ParseError error;
+
+	this(ParseError error)
+	{
+		super(error.toString());
+		this.error = error;
+	}
 }
 
 class Parser
@@ -26,6 +65,41 @@ class Parser
 
 	///The last error found while parsing
 	ParseError error;
+
+	/**
+	* Advances to the next token.
+	*/
+	void next()
+	{
+		if(tokenIndex < lexer.tokens.length)
+			tokenIndex++;
+	}
+
+	/**
+	* Gets the current token.
+	*/
+	Token token()
+	{
+		return lexer.tokens[tokenIndex];
+	}
+
+	/**
+	* Matches a token type and advances if the match is successful.
+	* @param type The token type to match against.
+	*/
+	bool match(TokenType type)
+	{
+		if(token().type == type)
+		{
+			next();
+			return true;
+		}
+
+		else
+		{
+			return false;
+		}
+	}
 
 	/**
 	* Logs an error.
@@ -50,6 +124,211 @@ class Parser
 	}
 
 	/**
+	* The starting point for parsing the program.
+	* program
+	*	:	statements
+	*/
+	Node[] program()
+	{
+		Node[] ast = statements();
+
+		//Report the error.
+		if(error !is null)
+		{
+			writeln(error.toString());
+		}
+
+		return ast;
+	}
+
+	/**
+	* Parses statements.
+	* statements
+	*	:	statement *
+	*/
+	Node[] statements()
+	{
+		//The statements found
+		Node[] stmts;
+
+		//Find 0 or more statements
+		Node stmt;
+		while((stmt = statement()) !is null)
+		{
+			stmts ~= stmt;
+		}
+
+		return stmts;
+	}
+
+	/**
+	* Parses a statement.
+	* statement
+	* 	:	block
+	*	:	if
+	*	:	else
+	*	:	expr ;
+	*/
+	Node statement()
+	{
+		//Save location state
+		int save = tokenIndex;
+		Node node;
+
+		//Block
+		if((node = block()) !is null)
+			return node;
+		//If
+		else if((node = ifStatement()) !is null)
+			return node;
+		//While
+		else if((node = whileStatement()) !is null)
+			return node;
+		//Expression
+		else if((node = expr()) !is null)
+			return node;
+		//Error
+		else
+		{
+			//Restore  location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses a block statement.
+	* block
+	* 	:	{ statements }
+	*/
+	Node block()
+	{
+		//Save location state
+		int save = tokenIndex;
+
+		//Use a do-while so that we can break at any point
+		//to restore the location and return null.
+		try
+		{
+			//Match a '{'
+			if(!match(TokenType.Lbrc))
+			{
+				throw new ParseException(new ParseError("block", token(), "{"));
+			}
+
+			//Match 0 or more statements
+			Node[] stmts = statements();
+
+			//Match a '}'
+			if(!match(TokenType.Rbrc))
+			{
+				throw new ParseException(new ParseError("block", token(), "}"));
+			}
+
+			//All good!
+			return new BlockNode(stmts);
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses an if statement.
+	* if
+	* 	:	IF ( expr ) statement
+	*/
+	Node ifStatement()
+	{
+		//Save location state
+		int save = tokenIndex;
+
+		//Use a do-while so that we can break at any point
+		//to restore the location and return null.
+		try
+		{
+			
+
+			//All good!
+			//return new IfNode(cond, stmt);
+			return null;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses an while statement.
+	* while
+	* 	:	WHILE ( expr ) statement
+	*/
+	Node whileStatement()
+	{
+		return null;
+	}
+
+	/**
+	* Parses an expression.
+	* Parses logical-level expressions.
+	* expr	:	prec1 {lop prec1}*
+	*/
+	Node expr()
+	{
+		return null;
+	}
+
+	/**
+	* Parses comparison-level expressions.
+	* expr	:	prec2 {cop prec2}*
+	*/
+	Node prec1()
+	{
+		return null;
+	}
+
+	/**
+	* Parses addition-level expressions.
+	* expr	:	prec3 {aop prec3}*
+	*/
+	Node prec2()
+	{
+		return null;
+	}
+
+	/**
+	* Parses multiplication-level expressions.
+	* expr	:	prec4 {mop prec4}*
+	*/
+	Node prec3()
+	{
+		return null;
+	}
+
+	/**
+	* Parses a factor.
+	* expr	:	ID | NUM | ( expr )
+	*/
+	Node prec4()
+	{
+		return null;
+	}
+
+	/**
 	* Lexes the input into tokens.
 	*/
 	void lex()
@@ -58,7 +337,7 @@ class Parser
 	}
 
 	/**
-	* Parses the input and builds AST
+	* Parses the lexed tokens and builds AST
 	*/
 	void parse()
 	{

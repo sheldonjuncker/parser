@@ -9,23 +9,30 @@ statement
 	:	block
 	:	if
 	:	while
-	:	expr ';'
+	:	expr ;
 
 block
-	:	'{' statements '}'
+	:	{ statements }
 
 if
-	:	IF '(' expr ')' stmt
+	:	IF ( expr ) stmt
 
 while
-	:	WHILE '(' expr ')' stmt
+	:	WHILE ( expr ) stmt
 
 expr
-	:	ID '=' expr
-	|	expr (AND|OR|XOR) expr
-	|	expr (EQ|LT|GT|LTE|GTE) expr
-	|	'!' expr
-	|	expr ('+'|'-') expr
-	|	expr ('*'|'/'|'%') expr
-	|	ID
+	:	logical {OP logical}*
+
+logical
+	:	comparison {OP comparison}*
+
+comparison
+	:	addition {OP addition}*
+
+addition
+	:	multiplication {OP multiplicatoin}*
+
+multiplication
+	:	ID
 	|	NUM
+	|	( expr )
