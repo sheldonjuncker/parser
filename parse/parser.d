@@ -26,7 +26,7 @@ class ParseError
 	override string toString()
 	{
 		string message;
-		message = "Unexpected " ~ found.lexeme ~ " in " ~ where ~ " expected " ~ expected;
+		message = "Unexpected " ~ found.lexeme ~  " " ~ where ~ " on " ~  found.location.toString() ~ ": expected " ~ expected;
 		return message;
 	}
 
@@ -71,7 +71,7 @@ class Parser
 	*/
 	void next()
 	{
-		if(tokenIndex < lexer.tokens.length)
+		if(tokenIndex < (lexer.tokens.length-1))
 			tokenIndex++;
 	}
 
@@ -128,7 +128,7 @@ class Parser
 
 		//Only replace previous error if the new one is found further
 		//in the stream of tokens.
-		if(newLoc.line > oldLoc. line || (newLoc.line == oldLoc.line && newLoc.column > oldLoc.column))
+		if(newLoc.line > oldLoc. line || (newLoc.line == oldLoc.line && newLoc.column >= oldLoc.column))
 			this.error = error;
 	}
 
@@ -142,7 +142,7 @@ class Parser
 		Node[] ast = statements();
 
 		//Report the error.
-		if(error !is null)
+		if(error !is null && token().type != TokenType.Eof)
 		{
 			writeln(error.toString());
 		}
@@ -195,7 +195,27 @@ class Parser
 			return node;
 		//Expression
 		else if((node = expr()) !is null)
-			return node;
+		{
+			try
+			{
+				if(!match(TokenType.Semi))
+				{
+					throw new ParseException(new ParseError("after expression", token(), ";"));
+				}
+				return node;
+			}
+
+			catch(ParseException error)
+			{
+				//Log error
+				logError(error.error);
+
+				//Restore location
+				tokenIndex = save;
+				return null;
+			}
+		}
+
 		//Error
 		else
 		{
@@ -258,7 +278,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "if statement";
+		string where = "in if statement";
 
 		try
 		{
@@ -320,7 +340,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "while statement";
+		string where = "in while statement";
 
 		try
 		{
@@ -382,7 +402,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "expression";
+		string where = "in expression";
 
 		try
 		{
@@ -410,13 +430,13 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.And)
-					return new AndNode(left, right);
+					left =  new AndNode(left, right);
 
 				else if(op.type == TokenType.Or)
-					return new OrNode(left, right);
+					left = new OrNode(left, right);
 
 				else
-					return new XorNode(left, right);
+					left = new XorNode(left, right);
 			}
 
 			//Only a left hand side
@@ -444,7 +464,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "expression";
+		string where = "in expression";
 
 		try
 		{
@@ -472,19 +492,19 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Equals)
-					return new EqualsNode(left, right);
+					left = new EqualsNode(left, right);
 
 				else if(op.type == TokenType.Gt)
-					return new GtNode(left, right);
+					left = new GtNode(left, right);
 
 				else if(op.type == TokenType.Gte)
-					return new GteNode(left, right);
+					left = new GteNode(left, right);
 
 				else if(op.type == TokenType.Lt)
-					return new LtNode(left, right);
+					left = new LtNode(left, right);
 
 				else
-					return new LteNode(left, right);
+					left = new LteNode(left, right);
 			}
 
 			//Only a left hand side
@@ -512,7 +532,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "expression";
+		string where = "in expression";
 
 		try
 		{
@@ -540,10 +560,10 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Plus)
-					return new AddNode(left, right);
+					left = new AddNode(left, right);
 
 				else
-					return new SubNode(left, right);
+					left = new SubNode(left, right);
 			}
 
 			//Only a left hand side
@@ -571,7 +591,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "expression";
+		string where = "in expression";
 
 		try
 		{
@@ -599,11 +619,11 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Star)
-					return new MulNode(left, right);
+					left = new MulNode(left, right);
 				else if(op.type == TokenType.Slash)
-					return new DivNode(left, right);
+					left = new DivNode(left, right);
 				else
-					return new ModNode(left, right);
+					left = new ModNode(left, right);
 			}
 
 			//Only a left hand side
@@ -631,7 +651,7 @@ class Parser
 		int save = tokenIndex;
 
 		//The location to use for error reporting
-		string where = "expression";
+		string where = "in expression";
 
 		try
 		{
@@ -705,7 +725,7 @@ class Parser
 	*/
 	void parse()
 	{
-
+		program();
 	}
 
 	/**
