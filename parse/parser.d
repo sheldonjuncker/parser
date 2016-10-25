@@ -623,11 +623,73 @@ class Parser
 
 	/**
 	* Parses a factor.
-	* expr	:	ID | NUM | ( expr )
+	* expr	:	ID | NUM | STR | ( expr )
 	*/
 	Node prec4()
 	{
-		return null;
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "expression";
+
+		try
+		{
+			//Test for an identifier
+			if(accept(TokenType.Ident))
+			{
+				Token id = token();
+				next();
+				return new IdentNode(id.lexeme);
+			}
+
+			//Test for a number
+			else if(accept(TokenType.Double))
+			{
+				Token num = token();
+				next();
+				return new NumNode(num.lexeme);
+			}
+
+			//Test for a string
+			else if(accept(TokenType.Str))
+			{
+				Token str = token();
+				next();
+				return new StringNode(str.lexeme);
+			}
+
+			//Test for a parenthesized expression
+			else if(match(TokenType.Lprn))
+			{
+				//Get an expression
+				Node exp = expr();
+
+				if(exp is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "expression after ("));
+				}
+
+				//Match the closing parenthesis
+				if(!match(TokenType.Rprn))
+				{
+					throw new ParseException(new ParseError(where, token(), "expected )"));
+				}
+			}
+			
+			//No expression
+			throw new ParseException(new ParseError(where, token(), "expected an expression"));
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
 	}
 
 	/**

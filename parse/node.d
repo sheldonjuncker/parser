@@ -1,4 +1,5 @@
 module parse.node;
+import std.conv;
 
 /**
 * Represents a node of the AST.
@@ -155,5 +156,32 @@ class ModNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}	
+}
+
+class IdentNode : Node
+{
+	string ident;
+	this(string ident)
+	{
+		this.ident = ident;
+	}	
+}
+
+class NumNode : Node
+{
+	double num;
+	this(string num)
+	{
+		this.num = to!double(num); 
+	}	
+}
+
+class StringNode : Node
+{
+	string str;
+	this(string str)
+	{
+		this.str = str;
 	}	
 }
