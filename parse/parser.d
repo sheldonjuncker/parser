@@ -102,6 +102,15 @@ class Parser
 	}
 
 	/**
+	* Determines if the current token can be matched.
+	* @param type The token type to test.
+	*/
+	bool accept(TokenType type)
+	{
+		return token().type == type;
+	}
+
+	/**
 	* Logs an error.
 	* @param error The error object to log.
 	* @note The error is only logged if it occurs further
@@ -369,7 +378,60 @@ class Parser
 	*/
 	Node expr()
 	{
-		return null;
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "expression";
+
+		try
+		{
+			//Get left hand side
+			Node left = prec1();
+
+			if(left is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
+			}
+
+			//While we're looking at a &&, ||, or ^, keep going
+			while(accept(TokenType.And) || accept(TokenType.Or) || accept(TokenType.Xor))
+			{
+				//Get the operator and eat token
+				Token op = token();
+				next();
+
+				//Read right hand side of expression
+				Node right = prec1();
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
+				}
+
+				//Build expression
+				if(op.type == TokenType.And)
+					return new AndNode(left, right);
+
+				else if(op.type == TokenType.Or)
+					return new OrNode(left, right);
+
+				else
+					return new XorNode(left, right);
+			}
+
+			//Only a left hand side
+			return left;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
 	}
 
 	/**
