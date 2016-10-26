@@ -159,6 +159,14 @@ class ModNode : BinaryNode
 	}	
 }
 
+class AssignNode : BinaryNode
+{
+	this(Node left, Node right)
+	{
+		super(left, right);
+	}	
+}
+
 class IdentNode : Node
 {
 	string ident;

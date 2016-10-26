@@ -57,6 +57,9 @@ class ParseException : Exception
 
 class Parser
 {
+	///The resulting AST
+	Node[] ast;
+
 	///The lexer object
 	Lexer lexer;
 
@@ -139,15 +142,8 @@ class Parser
 	*/
 	Node[] program()
 	{
-		Node[] ast = statements();
-
-		//Report the error.
-		if(error !is null && token().type != TokenType.Eof)
-		{
-			writeln(error.toString());
-		}
-
-		return ast;
+		//A program is 0 or more statements
+		return statements();
 	}
 
 	/**
@@ -394,7 +390,7 @@ class Parser
 	/**
 	* Parses an expression.
 	* Parses logical-level expressions.
-	* expr	:	prec1 {lop prec1}*
+	* expr	:	prec2 {lop prec2}*
 	*/
 	Node expr()
 	{
@@ -455,8 +451,8 @@ class Parser
 	}
 
 	/**
-	* Parses comparison-level expressions.
-	* expr	:	prec2 {cop prec2}*
+	* Parses assignment operations.
+	* expr	:	prec2 = expr()
 	*/
 	Node prec1()
 	{
@@ -476,6 +472,59 @@ class Parser
 				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
 			}
 
+			//Check for =
+			if(accept(TokenType.Assign))
+			{
+				//Eat token
+				next();
+
+				//Read right hand side of expression
+				Node right = expr();
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
+				}
+
+				return new AssignNode(left, right);
+			}
+
+			//Only a left hand side
+			return left;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses comparison-level expressions.
+	* expr	:	prec3 {cop prec3}*
+	*/
+	Node prec2()
+	{
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "in expression";
+
+		try
+		{
+			//Get left hand side
+			Node left = prec3();
+
+			if(left is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
+			}
+
 			//While we're looking at ==, >, <, >=, <= keep going
 			while(accept(TokenType.Equals) || accept(TokenType.Gt) || accept(TokenType.Lt) || accept(TokenType.Gte) || accept(TokenType.Lte))
 			{
@@ -484,7 +533,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec2();
+				Node right = prec3();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -524,9 +573,9 @@ class Parser
 
 	/**
 	* Parses addition-level expressions.
-	* expr	:	prec3 {aop prec3}*
+	* expr	:	prec4 {aop prec4}*
 	*/
-	Node prec2()
+	Node prec3()
 	{
 		//Save location state
 		int save = tokenIndex;
@@ -537,7 +586,7 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec3();
+			Node left = prec4();
 
 			if(left is null)
 			{
@@ -552,7 +601,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec3();
+				Node right = prec4();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -585,7 +634,7 @@ class Parser
 	* Parses multiplication-level expressions.
 	* expr	:	prec4 {mop prec4}*
 	*/
-	Node prec3()
+	Node prec4()
 	{
 		//Save location state
 		int save = tokenIndex;
@@ -596,7 +645,7 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec4();
+			Node left = prec5();
 
 			if(left is null)
 			{
@@ -611,7 +660,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec4();
+				Node right = prec5();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -645,7 +694,7 @@ class Parser
 	* Parses a factor.
 	* expr	:	ID | NUM | STR | ( expr )
 	*/
-	Node prec4()
+	Node prec5()
 	{
 		//Save location state
 		int save = tokenIndex;
@@ -725,7 +774,14 @@ class Parser
 	*/
 	void parse()
 	{
-		program();
+		//Generate AST
+		ast = program();
+
+		//Report errors if any
+		if(error !is null && token().type != TokenType.Eof)
+		{
+			writeln(error.toString());
+		}
 	}
 
 	/**
