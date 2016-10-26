@@ -22,6 +22,5 @@ int main(string[] argv)
 		node.print();
 	}
 
-
 	return 0;
 }

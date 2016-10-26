@@ -822,14 +822,6 @@ class Parser
 				return new NumNode(num.lexeme);
 			}
 
-			//Test for a string
-			else if(accept(TokenType.Str))
-			{
-				Token str = token();
-				next();
-				return new StringNode(str.lexeme);
-			}
-
 			//Test for a parenthesized expression
 			else if(match(TokenType.Lprn))
 			{
