@@ -833,6 +833,8 @@ class Parser
 				{
 					throw new ParseException(new ParseError(where, token(), "expected )"));
 				}
+
+				return exp;
 			}
 			
 			//No expression

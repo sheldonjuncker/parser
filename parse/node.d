@@ -1,12 +1,20 @@
 module parse.node;
 import std.conv;
+import std.stdio;
 
 /**
 * Represents a node of the AST.
 */
 class Node
 {
-	
+	/**
+	* Prints out a representation of a node.
+	* Used in debugging to make sure that precedence was matched correctly.
+	*/
+	void print()
+	{
+
+	}
 }
 
 class BlockNode : Node
@@ -16,6 +24,19 @@ class BlockNode : Node
 	this(Node[] stmts)
 	{
 		this.stmts = stmts;
+	}
+
+	override void print()
+	{
+		writeln("{");
+		foreach(Node node; stmts)
+		{
+			//Won't work for nested blocks.
+			write("\t");
+			node.print();
+			write("\n");
+		}
+		writeln("}");
 	}
 }
 
@@ -29,6 +50,14 @@ class IfNode : Node
 		this.cond = cond;
 		this.stmt = stmt;
 	}
+
+	override void print()
+	{
+		write("if( ");
+		cond.print();
+		write(")\n");
+		stmt.print();
+	}
 }
 
 class WhileNode : Node
@@ -41,6 +70,14 @@ class WhileNode : Node
 		this.cond = cond;
 		this.stmt = stmt;
 	}
+
+	override void print()
+	{
+		write("while( ");
+		cond.print();
+		write(")\n");
+		stmt.print();
+	}
 }
 
 class BinaryNode : Node
@@ -52,7 +89,7 @@ class BinaryNode : Node
 	{
 		this.left = left;
 		this.right = right;
-	}	
+	}
 }
 
 class AndNode : BinaryNode
@@ -60,7 +97,16 @@ class AndNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
-	}	
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" && ");
+		right.print();
+		write(" )");
+	}
 }
 
 class OrNode : BinaryNode
@@ -69,6 +115,15 @@ class OrNode : BinaryNode
 	{
 		super(left, right);
 	}	
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" || ");
+		right.print();
+		write(" )");
+	}
 }
 
 class XorNode : BinaryNode
@@ -76,6 +131,15 @@ class XorNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}	
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" ^^ ");
+		right.print();
+		write(" )");
 	}	
 }
 
@@ -85,6 +149,15 @@ class EqualsNode : BinaryNode
 	{
 		super(left, right);
 	}	
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" == ");
+		right.print();
+		write(" )");
+	}
 }
 
 class GtNode : BinaryNode
@@ -92,7 +165,16 @@ class GtNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
-	}	
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" > ");
+		right.print();
+		write(" )");
+	}
 }
 
 class LtNode : BinaryNode
@@ -101,6 +183,15 @@ class LtNode : BinaryNode
 	{
 		super(left, right);
 	}	
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" < ");
+		right.print();
+		write(" )");
+	}
 }
 
 class GteNode : BinaryNode
@@ -109,6 +200,15 @@ class GteNode : BinaryNode
 	{
 		super(left, right);
 	}	
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" >= ");
+		right.print();
+		write(" )");
+	}
 }
 
 class LteNode : BinaryNode
@@ -117,6 +217,16 @@ class LteNode : BinaryNode
 	{
 		super(left, right);
 	}	
+
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" <= ");
+		right.print();
+		write(" )");
+	}
 }
 
 class AddNode : BinaryNode
@@ -124,6 +234,15 @@ class AddNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" + ");
+		right.print();
+		write(" )");
 	}	
 }
 
@@ -132,6 +251,15 @@ class SubNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" - ");
+		right.print();
+		write(" )");
 	}	
 }
 
@@ -140,7 +268,16 @@ class MulNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
-	}	
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" * ");
+		right.print();
+		write(" )");
+	}
 }
 
 class DivNode : BinaryNode
@@ -148,6 +285,15 @@ class DivNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" / ");
+		right.print();
+		write(" )");
 	}	
 }
 
@@ -156,6 +302,15 @@ class ModNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" % ");
+		right.print();
+		write(" )");
 	}	
 }
 
@@ -164,7 +319,16 @@ class AssignNode : BinaryNode
 	this(Node left, Node right)
 	{
 		super(left, right);
-	}	
+	}
+
+	override void print()
+	{
+		write("( ");
+		left.print();
+		write(" = ");
+		right.print();
+		write(" )");
+	}
 }
 
 class IdentNode : Node
@@ -173,6 +337,11 @@ class IdentNode : Node
 	this(string ident)
 	{
 		this.ident = ident;
+	}
+
+	override void print()
+	{
+		write(ident);
 	}	
 }
 
@@ -183,6 +352,11 @@ class NumNode : Node
 	{
 		this.num = to!double(num); 
 	}	
+
+	override void print()
+	{
+		write(num);
+	}
 }
 
 class StringNode : Node
@@ -192,6 +366,11 @@ class StringNode : Node
 	{
 		this.str = str;
 	}	
+
+	override void print()
+	{
+		write("\"" ~ str ~ "\"");
+	}
 }
 
 class NotNode : Node
@@ -201,4 +380,12 @@ class NotNode : Node
 	{
 		this.right = right;
 	}	
+
+	override void print()
+	{
+		write("( ");
+		write("! ");
+		right.print();
+		write(" )");
+	}
 }

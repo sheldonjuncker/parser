@@ -16,5 +16,12 @@ int main(string[] argv)
 	//Get the AST
 	Node[] ast = p.ast;
 
+	//Print out AST (~works)
+	foreach(Node node; ast)
+	{
+		node.print();
+	}
+
+
 	return 0;
 }
