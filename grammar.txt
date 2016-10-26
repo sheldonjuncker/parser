@@ -21,6 +21,9 @@ while
 	:	WHILE ( expr ) stmt
 
 expr
+	:	assign = expr
+
+assign
 	:	logical {OP logical}*
 
 logical
@@ -33,6 +36,12 @@ addition
 	:	multiplication {OP multiplicatoin}*
 
 multiplication
+	:	logical_not
+
+logical_not
+	:	! factor
+
+factor
 	:	ID
 	|	NUM
 	|	( expr )
