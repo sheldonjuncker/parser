@@ -193,3 +193,12 @@ class StringNode : Node
 		this.str = str;
 	}	
 }
+
+class NotNode : Node
+{
+	Node right;
+	this(Node right)
+	{
+		this.right = right;
+	}	
+}

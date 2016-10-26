@@ -69,6 +69,9 @@ class Parser
 	///The last error found while parsing
 	ParseError error;
 
+	///An array of function pointers for precedence
+	Node delegate()[] prec;
+
 	/**
 	* Advances to the next token.
 	*/
@@ -133,6 +136,20 @@ class Parser
 		//in the stream of tokens.
 		if(newLoc.line > oldLoc. line || (newLoc.line == oldLoc.line && newLoc.column >= oldLoc.column))
 			this.error = error;
+	}
+
+	/**
+	* Gets the precedence level of a function.
+	* @param func The Node delegate() to get precedence of.
+	*/
+	int getPrecedence(Node delegate() func)
+	{
+		for(int i=0; i<prec.length; i++)
+		{
+			if(prec[i] == func)
+				return i;
+		}
+		return -1;
 	}
 
 	/**
@@ -389,73 +406,22 @@ class Parser
 
 	/**
 	* Parses an expression.
-	* Parses logical-level expressions.
-	* expr	:	prec2 {lop prec2}*
+	* Guaranteed to be the highest level construct.
 	*/
 	Node expr()
 	{
-		//Save location state
-		int save = tokenIndex;
-
-		//The location to use for error reporting
-		string where = "in expression";
-
-		try
-		{
-			//Get left hand side
-			Node left = prec1();
-
-			if(left is null)
-			{
-				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
-			}
-
-			//While we're looking at a &&, ||, or ^, keep going
-			while(accept(TokenType.And) || accept(TokenType.Or) || accept(TokenType.Xor))
-			{
-				//Get the operator and eat token
-				Token op = token();
-				next();
-
-				//Read right hand side of expression
-				Node right = prec1();
-				if(right is null)
-				{
-					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
-				}
-
-				//Build expression
-				if(op.type == TokenType.And)
-					left =  new AndNode(left, right);
-
-				else if(op.type == TokenType.Or)
-					left = new OrNode(left, right);
-
-				else
-					left = new XorNode(left, right);
-			}
-
-			//Only a left hand side
-			return left;
-		}
-
-		catch(ParseException error)
-		{
-			//Log error
-			logError(error.error);
-
-			//Restore location
-			tokenIndex = save;
-			return null;
-		}
+		//Call lowest level precedence
+		return prec[0]();
 	}
 
 	/**
 	* Parses assignment operations.
 	* expr	:	prec2 = expr()
 	*/
-	Node prec1()
+	Node assignment()
 	{
+		int precLevel = getPrecedence(&assignment);
+
 		//Save location state
 		int save = tokenIndex;
 
@@ -465,7 +431,7 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec2();
+			Node left = prec[precLevel + 1]();
 
 			if(left is null)
 			{
@@ -504,11 +470,14 @@ class Parser
 	}
 
 	/**
-	* Parses comparison-level expressions.
-	* expr	:	prec3 {cop prec3}*
+	* Parses logical operators.
+	* expr	:	comparison {AND,OR,XOR comparison}*
 	*/
-	Node prec2()
+	Node logical()
 	{
+		//Expression's precedence level
+		int precLevel = getPrecedence(&logical);
+
 		//Save location state
 		int save = tokenIndex;
 
@@ -518,7 +487,71 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec3();
+			Node left = prec[precLevel + 1]();
+
+			if(left is null)
+			{
+				throw new ParseException(new ParseError(where, token(), "left hand side of expression"));
+			}
+
+			//While we're looking at a &&, ||, or ^, keep going
+			while(accept(TokenType.And) || accept(TokenType.Or) || accept(TokenType.Xor))
+			{
+				//Get the operator and eat token
+				Token op = token();
+				next();
+
+				//Read right hand side of expression
+				Node right = prec[precLevel + 1]();
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
+				}
+
+				//Build expression
+				if(op.type == TokenType.And)
+					left =  new AndNode(left, right);
+
+				else if(op.type == TokenType.Or)
+					left = new OrNode(left, right);
+
+				else
+					left = new XorNode(left, right);
+			}
+
+			//Only a left hand side
+			return left;
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}		
+	}
+
+	/**
+	* Parses comparison-level expressions.
+	* expr	:	prec3 {cop prec3}*
+	*/
+	Node comparison()
+	{
+		int precLevel = getPrecedence(&comparison);
+
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "in expression";
+
+		try
+		{
+			//Get left hand side
+			Node left = prec[precLevel + 1]();
 
 			if(left is null)
 			{
@@ -533,7 +566,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec3();
+				Node right = prec[precLevel + 1]();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -573,10 +606,12 @@ class Parser
 
 	/**
 	* Parses addition-level expressions.
-	* expr	:	prec4 {aop prec4}*
+	* expr	:	prec4 {+,- prec4}*
 	*/
-	Node prec3()
+	Node mathLower()
 	{
+		int precLevel = getPrecedence(&mathLower);
+
 		//Save location state
 		int save = tokenIndex;
 
@@ -586,7 +621,7 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec4();
+			Node left = prec[precLevel + 1]();
 
 			if(left is null)
 			{
@@ -601,7 +636,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec4();
+				Node right = prec[precLevel + 1]();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -632,10 +667,12 @@ class Parser
 
 	/**
 	* Parses multiplication-level expressions.
-	* expr	:	prec4 {mop prec4}*
+	* expr	:	prec4 {*,/,% prec4}*
 	*/
-	Node prec4()
+	Node mathUpper()
 	{
+		int precLevel = getPrecedence(&mathUpper);
+
 		//Save location state
 		int save = tokenIndex;
 
@@ -645,7 +682,7 @@ class Parser
 		try
 		{
 			//Get left hand side
-			Node left = prec5();
+			Node left = prec[precLevel + 1]();
 
 			if(left is null)
 			{
@@ -660,7 +697,7 @@ class Parser
 				next();
 
 				//Read right hand side of expression
-				Node right = prec5();
+				Node right = prec[precLevel + 1]();
 				if(right is null)
 				{
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
@@ -691,17 +728,69 @@ class Parser
 	}
 
 	/**
-	* Parses a factor.
-	* expr	:	ID | NUM | STR | ( expr )
+	* Parses logical not expression.
+	* expr	:	! factor
 	*/
-	Node prec5()
+	Node logicalNot()
 	{
+		int precLevel = getPrecedence(&logicalNot);
+
 		//Save location state
 		int save = tokenIndex;
 
 		//The location to use for error reporting
 		string where = "in expression";
 
+		try
+		{
+			//Match !
+			if(match(TokenType.Not))
+			{
+				Node right = prec[precLevel + 1]();
+
+				if(right is null)
+				{
+					throw new ParseException(new ParseError(where, token(), "expression after !"));
+				}
+
+				else
+				{
+					return new NotNode(right);
+				}
+			}
+
+			//No !
+			else
+			{
+				return prec[precLevel + 1]();
+			}
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses a factor.
+	* expr	:	ID | NUM | STR | ( expr )
+	*/
+	Node factor()
+	{
+		int precLevel = getPrecedence(&factor);
+		
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "in expression";
+		
 		try
 		{
 			//Test for an identifier
@@ -790,6 +879,18 @@ class Parser
 	*/
 	this(string filename)
 	{
+		//Setup precedence levels
+		prec = [
+			&this.assignment,
+			&this.logical,
+			&this.comparison,
+			&this.mathLower,
+			&this.mathUpper,
+			&this.logicalNot,
+			&this.factor
+		];
+
+		//Construct the Lexer
 		lexer = new Lexer(filename);
 	}
 }
