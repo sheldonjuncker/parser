@@ -55,7 +55,7 @@ class IfNode : Node
 	{
 		write("if( ");
 		cond.print();
-		write(")\n");
+		write(" )\n");
 		stmt.print();
 	}
 }
@@ -75,7 +75,7 @@ class WhileNode : Node
 	{
 		write("while( ");
 		cond.print();
-		write(")\n");
+		write(" )\n");
 		stmt.print();
 	}
 }
