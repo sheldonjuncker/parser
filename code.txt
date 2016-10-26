@@ -1,5 +1,5 @@
 while(!x == 5)
 {
-	do;
+	do += 4;
 	this;
 }

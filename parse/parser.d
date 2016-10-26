@@ -153,6 +153,19 @@ class Parser
 	}
 
 	/**
+	* Determines if a parse was successful.
+	*/
+	bool parseSuccess()
+	{
+		/*
+		* Conditions:
+		*	Lex was successful
+		*	All tokens were eaten
+		*/
+		return (lexer.lexSuccess() && token().type == TokenType.Eof);
+	}
+
+	/**
 	* The starting point for parsing the program.
 	* program
 	*	:	statements
@@ -871,7 +884,7 @@ class Parser
 		//Report errors if any
 		if(error !is null && token().type != TokenType.Eof)
 		{
-			writeln(error.toString());
+			throw new ParseException(error);
 		}
 	}
 
