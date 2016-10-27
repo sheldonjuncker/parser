@@ -1,4 +1,13 @@
 while(!x == 5)
 {
 	a = b = c = 5;
+	{
+		more;
+		code;
+		if(x == 10 + 10)
+		{
+			more;
+			code;
+		}
+	}
 }

@@ -13,16 +13,17 @@ class BlockNode : Node
 		this.stmts = stmts;
 	}
 
-	override void print()
+	override void print(int tabs=0)
 	{
 		writeln("{");
+		
 		foreach(Node node; stmts)
 		{
-			//Won't work for nested blocks.
-			write("\t");
-			node.print();
-			write("\n");
+			writeTabs("", tabs + 1);
+			node.print(tabs + 1);
+			write(";\n");
 		}
-		writeln("}");
+		
+		writeTabs("}", tabs);
 	}
 }

@@ -11,12 +11,12 @@ class GtNode : BinaryNode
 		super(location, left, right);
 	}
 	
-	override void print()
+	override void print(int tabs=0)
 	{
-		write("( ");
-		left.print();
+		write("(");
+		left.print(tabs);
 		write(" > ");
-		right.print();
-		write(" )");
+		right.print(tabs);
+		write(")");
 	}
 }

@@ -58,7 +58,7 @@ class ParseException : Exception
 class Parser
 {
 	///The resulting AST
-	Node[] ast;
+	Node ast;
 
 	///The lexer object
 	Lexer lexer;
@@ -900,8 +900,11 @@ class Parser
 	*/
 	void parse()
 	{
+		//Location of first token
+		TokenLocation location = token().location;
+
 		//Generate AST
-		ast = program();
+		ast = new BlockNode(location, program());
 
 		//Report errors if any
 		if(error !is null && token().type != TokenType.Eof)

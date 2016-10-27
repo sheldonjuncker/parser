@@ -12,11 +12,11 @@ class NotNode : Node
 		this.right = right;
 	}	
 
-	override void print()
+	override void print(int tabs=0)
 	{
-		write("( ");
-		write("! ");
-		right.print();
-		write(" )");
+		write("(");
+		write("!");
+		right.print(tabs);
+		write(")");
 	}
 }

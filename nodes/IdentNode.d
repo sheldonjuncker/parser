@@ -12,7 +12,7 @@ class IdentNode : Node
 		this.ident = ident;
 	}
 
-	override void print()
+	override void print(int tabs=0)
 	{
 		write(ident);
 	}	

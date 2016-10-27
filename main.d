@@ -15,13 +15,10 @@ int main(string[] argv)
 	p.parse();
 
 	//Get the AST
-	Node[] ast = p.ast;
+	Node ast = p.ast;
 
 	//Print out AST (~works)
-	foreach(Node node; ast)
-	{
-		node.print();
-	}
-
+	ast.print();
+	
 	return 0;
 }

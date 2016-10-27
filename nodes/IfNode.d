@@ -15,11 +15,12 @@ class IfNode : Node
 		this.stmt = stmt;
 	}
 
-	override void print()
+	override void print(int tabs=0)
 	{
-		write("if( ");
-		cond.print();
-		write(" )\n");
-		stmt.print();
+		write("if(");
+		cond.print(tabs);
+		write(")\n");
+		writeTabs("", tabs);
+		stmt.print(tabs);
 	}
 }

@@ -13,7 +13,7 @@ class NumNode : Node
 		this.num = to!double(num); 
 	}	
 
-	override void print()
+	override void print(int tabs=0)
 	{
 		write(num);
 	}
