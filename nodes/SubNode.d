@@ -1,8 +1,10 @@
-module parse.nodes.MulNode;
-import parse.nodes.node;
-import parse.nodes.BinaryNode;
+module parser.nodes.SubNode;
+import parser.nodes.node;
+import parser.nodes.BinaryNode;
+import lexer.token;
+import std.stdio;
 
-class MulNode : BinaryNode
+class SubNode : BinaryNode
 {
 	this(TokenLocation location, Node left, Node right)
 	{
@@ -13,8 +15,8 @@ class MulNode : BinaryNode
 	{
 		write("( ");
 		left.print();
-		write(" * ");
+		write(" - ");
 		right.print();
 		write(" )");
-	}
+	}	
 }

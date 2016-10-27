@@ -1,7 +1,9 @@
-module parse.nodes.IfNode;
-import parse.nodes.node;
+module parser.nodes.WhileNode;
+import parser.nodes.node;
+import lexer.token;
+import std.stdio;
 
-class IfNode : Node
+class WhileNode : Node
 {
 	Node cond;
 	Node stmt;
@@ -15,7 +17,7 @@ class IfNode : Node
 
 	override void print()
 	{
-		write("if( ");
+		write("while( ");
 		cond.print();
 		write(" )\n");
 		stmt.print();

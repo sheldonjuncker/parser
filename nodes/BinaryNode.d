@@ -1,5 +1,7 @@
-module parse.nodes.BinaryNode;
-import parse.nodes.node;
+module parser.nodes.BinaryNode;
+import parser.nodes.node;
+import lexer.token;
+import std.stdio;
 
 class BinaryNode : Node
 {

@@ -1,6 +1,7 @@
+module parser.main;
 import std.stdio;
-import parse.parser;
-import parse.node;
+import parser.j_parser;
+import parser.nodes.node;
 
 int main(string[] argv)
 {

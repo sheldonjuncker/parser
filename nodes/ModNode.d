@@ -1,8 +1,10 @@
-module parse.nodes.GteNode;
-import parse.nodes.node;
-import parse.nodes.BinaryNode;
+module parser.nodes.ModNode;
+import parser.nodes.node;
+import parser.nodes.BinaryNode;
+import lexer.token;
+import std.stdio;
 
-class GteNode : BinaryNode
+class ModNode : BinaryNode
 {
 	this(TokenLocation location, Node left, Node right)
 	{
@@ -13,8 +15,8 @@ class GteNode : BinaryNode
 	{
 		write("( ");
 		left.print();
-		write(" >= ");
+		write(" % ");
 		right.print();
 		write(" )");
-	}
+	}	
 }

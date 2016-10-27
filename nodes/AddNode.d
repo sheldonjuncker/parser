@@ -1,8 +1,11 @@
-module parse.nodes.SubNode;
-import parse.nodes.node;
-import parse.nodes.BinaryNode;
+module parser.nodes.AddNode;
+import parser.nodes.node;
+import parser.nodes.BinaryNode;
+import lexer.token;
+import std.stdio;
+import std.stdio;
 
-class SubNode : BinaryNode
+class AddNode : BinaryNode
 {
 	this(TokenLocation location, Node left, Node right)
 	{
@@ -13,7 +16,7 @@ class SubNode : BinaryNode
 	{
 		write("( ");
 		left.print();
-		write(" - ");
+		write(" + ");
 		right.print();
 		write(" )");
 	}	

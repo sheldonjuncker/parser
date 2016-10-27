@@ -1,5 +1,7 @@
-module parse.nodes.IdentNode;
-import parse.nodes.node;
+module parser.nodes.IdentNode;
+import parser.nodes.node;
+import lexer.token;
+import std.stdio;
 
 class IdentNode : Node
 {

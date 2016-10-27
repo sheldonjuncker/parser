@@ -1,8 +1,10 @@
-module parse.nodes.XorNode;
-import parse.nodes.node;
-import parse.nodes.BinaryNode;
+module parser.nodes.AssignNode;
+import parser.nodes.node;
+import parser.nodes.BinaryNode;
+import lexer.token;
+import std.stdio;
 
-class XorNode : BinaryNode
+class AssignNode : BinaryNode
 {
 	this(TokenLocation location, Node left, Node right)
 	{
@@ -13,8 +15,8 @@ class XorNode : BinaryNode
 	{
 		write("( ");
 		left.print();
-		write(" ^^ ");
+		write(" = ");
 		right.print();
 		write(" )");
-	}	
+	}
 }

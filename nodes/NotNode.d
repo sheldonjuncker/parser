@@ -1,5 +1,7 @@
-module parse.nodes.NotNode;
-import parse.nodes.node;
+module parser.nodes.NotNode;
+import parser.nodes.node;
+import lexer.token;
+import std.stdio;
 
 class NotNode : Node
 {

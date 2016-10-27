@@ -1,7 +1,7 @@
-module parse.parser;
-import parse.node;
-import lex.lexer;
-import lex.token;
+module parser.j_parser;
+import lexer.j_lexer;
+import lexer.token;
+import parser.all_nodes;
 import std.stdio;
 import std.exception;
 

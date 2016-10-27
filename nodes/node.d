@@ -1,9 +1,6 @@
-module parse.nodes.node;
-public import std.conv;
-public import std.stdio;
-public import lex.token;
-import semantics;
-
+module parser.nodes.node;
+import lexer.token;
+import semantic.info;
 
 /**
 * Represents a node of the AST.

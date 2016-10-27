@@ -1,5 +1,8 @@
-module parse.nodes.NumNode;
-import parse.nodes.node;
+module parser.nodes.NumNode;
+import parser.nodes.node;
+import lexer.token;
+import std.stdio;
+import std.conv : to;
 
 class NumNode : Node
 {
