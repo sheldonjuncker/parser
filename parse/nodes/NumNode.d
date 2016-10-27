@@ -4,8 +4,9 @@ import parse.nodes.node;
 class NumNode : Node
 {
 	double num;
-	this(string num)
+	this(TokenLocation location, string num)
 	{
+		this.location = location;
 		this.num = to!double(num); 
 	}	
 

@@ -5,8 +5,9 @@ class BlockNode : Node
 {
 	Node[] stmts;
 
-	this(Node[] stmts)
+	this(TokenLocation location, Node[] stmts)
 	{
+		this.location = location;
 		this.stmts = stmts;
 	}
 

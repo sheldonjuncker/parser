@@ -6,8 +6,9 @@ class IfNode : Node
 	Node cond;
 	Node stmt;
 
-	this(Node cond, Node stmt)
+	this(TokenLocation location, Node cond, Node stmt)
 	{
+		this.location = location;
 		this.cond = cond;
 		this.stmt = stmt;
 	}

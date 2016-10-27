@@ -1,6 +1,7 @@
 module parse.nodes.node;
 public import std.conv;
 public import std.stdio;
+public import lex.token;
 
 
 /**
@@ -8,6 +9,9 @@ public import std.stdio;
 */
 class Node
 {
+	///The position of the node
+	TokenLocation location;
+
 	/**
 	* Prints out a representation of a node.
 	* Used in debugging to make sure that precedence was matched correctly.

@@ -4,8 +4,9 @@ import parse.nodes.node;
 class NotNode : Node
 {
 	Node right;
-	this(Node right)
+	this(TokenLocation location, Node right)
 	{
+		this.location = location;
 		this.right = right;
 	}	
 

@@ -4,10 +4,10 @@ import parse.nodes.BinaryNode;
 
 class GteNode : BinaryNode
 {
-	this(Node left, Node right)
+	this(TokenLocation location, Node left, Node right)
 	{
-		super(left, right);
-	}	
+		super(location, left, right);
+	}
 
 	override void print()
 	{

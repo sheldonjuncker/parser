@@ -263,6 +263,9 @@ class Parser
 
 		try
 		{
+			//Get location of start of block
+			TokenLocation location = token().location;
+
 			//Match a '{'
 			if(!match(TokenType.Lbrc))
 			{
@@ -279,7 +282,7 @@ class Parser
 			}
 
 			//All good!
-			return new BlockNode(stmts);
+			return new BlockNode(location, stmts);
 		}
 
 		catch(ParseException error)
@@ -308,6 +311,9 @@ class Parser
 
 		try
 		{
+			//Get location of if
+			TokenLocation location = token().location;
+
 			//Match if
 			if(!match(TokenType.If))
 			{
@@ -341,7 +347,7 @@ class Parser
 			}
 
 			//All good!
-			return new IfNode(cond, stmt);
+			return new IfNode(location, cond, stmt);
 		}
 
 		catch(ParseException error)
@@ -370,6 +376,9 @@ class Parser
 
 		try
 		{
+			//Get location of while
+			TokenLocation location = token().location;
+
 			//Match while
 			if(!match(TokenType.While))
 			{
@@ -403,7 +412,7 @@ class Parser
 			}
 
 			//All good!
-			return new WhileNode(cond, stmt);
+			return new WhileNode(location, cond, stmt);
 		}
 
 		catch(ParseException error)
@@ -443,6 +452,9 @@ class Parser
 
 		try
 		{
+			//Get location of assignment
+			TokenLocation location = token().location;
+
 			//Get left hand side
 			Node left = prec[precLevel + 1]();
 
@@ -464,7 +476,7 @@ class Parser
 					throw new ParseException(new ParseError(where, token(), "right hand side of expression"));
 				}
 
-				return new AssignNode(left, right);
+				return new AssignNode(location, left, right);
 			}
 
 			//Only a left hand side
@@ -499,6 +511,9 @@ class Parser
 
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Get left hand side
 			Node left = prec[precLevel + 1]();
 
@@ -523,13 +538,13 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.And)
-					left =  new AndNode(left, right);
+					left =  new AndNode(location, left, right);
 
 				else if(op.type == TokenType.Or)
-					left = new OrNode(left, right);
+					left = new OrNode(location, left, right);
 
 				else
-					left = new XorNode(left, right);
+					left = new XorNode(location, left, right);
 			}
 
 			//Only a left hand side
@@ -563,6 +578,9 @@ class Parser
 
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Get left hand side
 			Node left = prec[precLevel + 1]();
 
@@ -587,19 +605,19 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Equals)
-					left = new EqualsNode(left, right);
+					left = new EqualsNode(location, left, right);
 
 				else if(op.type == TokenType.Gt)
-					left = new GtNode(left, right);
+					left = new GtNode(location, left, right);
 
 				else if(op.type == TokenType.Gte)
-					left = new GteNode(left, right);
+					left = new GteNode(location, left, right);
 
 				else if(op.type == TokenType.Lt)
-					left = new LtNode(left, right);
+					left = new LtNode(location, left, right);
 
 				else
-					left = new LteNode(left, right);
+					left = new LteNode(location, left, right);
 			}
 
 			//Only a left hand side
@@ -633,6 +651,9 @@ class Parser
 
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Get left hand side
 			Node left = prec[precLevel + 1]();
 
@@ -657,10 +678,10 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Plus)
-					left = new AddNode(left, right);
+					left = new AddNode(location, left, right);
 
 				else
-					left = new SubNode(left, right);
+					left = new SubNode(location, left, right);
 			}
 
 			//Only a left hand side
@@ -694,6 +715,9 @@ class Parser
 
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Get left hand side
 			Node left = prec[precLevel + 1]();
 
@@ -718,11 +742,11 @@ class Parser
 
 				//Build expression
 				if(op.type == TokenType.Star)
-					left = new MulNode(left, right);
+					left = new MulNode(location, left, right);
 				else if(op.type == TokenType.Slash)
-					left = new DivNode(left, right);
+					left = new DivNode(location, left, right);
 				else
-					left = new ModNode(left, right);
+					left = new ModNode(location, left, right);
 			}
 
 			//Only a left hand side
@@ -756,6 +780,9 @@ class Parser
 
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Match !
 			if(match(TokenType.Not))
 			{
@@ -768,7 +795,7 @@ class Parser
 
 				else
 				{
-					return new NotNode(right);
+					return new NotNode(location, right);
 				}
 			}
 
@@ -806,12 +833,15 @@ class Parser
 		
 		try
 		{
+			//Get location of logical expression
+			TokenLocation location = token().location;
+
 			//Test for an identifier
 			if(accept(TokenType.Ident))
 			{
 				Token id = token();
 				next();
-				return new IdentNode(id.lexeme);
+				return new IdentNode(location, id.lexeme);
 			}
 
 			//Test for a number
@@ -819,7 +849,7 @@ class Parser
 			{
 				Token num = token();
 				next();
-				return new NumNode(num.lexeme);
+				return new NumNode(location, num.lexeme);
 			}
 
 			//Test for a parenthesized expression
