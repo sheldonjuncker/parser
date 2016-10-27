@@ -2,6 +2,7 @@ module parse.nodes.node;
 public import std.conv;
 public import std.stdio;
 public import lex.token;
+import semantics;
 
 
 /**
@@ -9,8 +10,11 @@ public import lex.token;
 */
 class Node
 {
-	///The position of the node
+	///The location of the node
 	TokenLocation location;
+
+	///Semantic info about the node
+	SemanticInfo semInfo;
 
 	/**
 	* Prints out a representation of a node.
@@ -18,6 +22,6 @@ class Node
 	*/
 	void print()
 	{
-
+		
 	}
 }

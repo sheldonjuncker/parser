@@ -1,1 +1,1 @@
-rdmd -debug -g -I/D/projects/lexer main.d
+rdmd -debug -g -I/D/projects/lexer -I/D/projects/analyzer main.d
