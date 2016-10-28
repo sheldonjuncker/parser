@@ -22,13 +22,19 @@ class VarDeclareNode : Node
 	
 	override void analyzeVariables(Environment e)
 	{
-		//Test to see if the variable exists.
-		SemanticVar var = e.getVar(name);
+		//Test to see if the variable exists in this scope
+		SemanticVar var = e.getVar(name, true);
 		
 		//Add it
 		if(var is null)
 		{
 			e.addVar(name, new SemanticVar(this));
+		}
+
+		//Cannot redeclare variable
+		else
+		{
+			throw new VarRedeclareException(name, location);
 		}
 	}
 }

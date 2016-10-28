@@ -29,9 +29,13 @@ class BlockNode : Node
 	
 	override void analyzeVariables(Environment e)
 	{
+		//Enter scope
+		e.addScope();
 		foreach(Node node; stmts)
 		{
 			node.analyzeVariables(e);
 		}
+		//Exit scope
+		e.removeScope();
 	}
 }

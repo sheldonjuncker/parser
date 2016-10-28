@@ -2,6 +2,7 @@ module parser.nodes.node;
 import lexer.token;
 import semantic.info;
 public import semantic.environment;
+public import semantic.exception;
 import std.stdio;
 
 /**
@@ -13,7 +14,7 @@ class Node
 	TokenLocation location;
 
 	///Semantic info about the node
-	SemanticInfo semInfo;
+	SemanticInfo semInfo = new SemanticInfo;
 
 	/**
 	* Writes anything with the correct number of tabs
