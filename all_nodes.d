@@ -18,5 +18,6 @@ public import parser.nodes.NotNode;
 public import parser.nodes.NumNode;
 public import parser.nodes.OrNode;
 public import parser.nodes.SubNode;
+public import parser.nodes.VarDeclareNode;
 public import parser.nodes.WhileNode;
 public import parser.nodes.XorNode;

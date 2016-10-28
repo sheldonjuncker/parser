@@ -202,6 +202,7 @@ class Parser
 	* 	:	block
 	*	:	if
 	*	:	else
+	*	:	var ID ;
 	*	:	expr ;
 	*/
 	Node statement()
@@ -219,6 +220,30 @@ class Parser
 		//While
 		else if((node = whileStatement()) !is null)
 			return node;
+		
+		//Var declaration
+		else if((node = varDeclareStatement()) !is null)
+		{
+			try
+			{
+				if(!match(TokenType.Semi))
+				{
+					throw new ParseException(new ParseError("after variable declaration", token(), ";"));
+				}
+				return node;
+			}
+
+			catch(ParseException error)
+			{
+				//Log error
+				logError(error.error);
+
+				//Restore location
+				tokenIndex = save;
+				return null;
+			}
+		}
+
 		//Expression
 		else if((node = expr()) !is null)
 		{
@@ -413,6 +438,53 @@ class Parser
 
 			//All good!
 			return new WhileNode(location, cond, stmt);
+		}
+
+		catch(ParseException error)
+		{
+			//Log error
+			logError(error.error);
+
+			//Restore location
+			tokenIndex = save;
+			return null;
+		}
+	}
+
+	/**
+	* Parses a variable declaration.
+	* var_declare
+	* 	:	var ID
+	*/
+	Node varDeclareStatement()
+	{
+		//Save location state
+		int save = tokenIndex;
+
+		//The location to use for error reporting
+		string where = "in variable declaration";
+
+		try
+		{
+			//Get location of while
+			TokenLocation location = token().location;
+
+			//Match var
+			if(!match(TokenType.Var))
+			{
+				throw new ParseException(new ParseError(where, token(), "var"));
+			}
+
+			Token id = token();
+
+			//Match ID
+			if(!match(TokenType.Ident))
+			{
+				throw new ParseException(new ParseError(where, token(), "identifier"));
+			}
+
+			//All good!
+			return new VarDeclareNode(location, id.lexeme);
 		}
 
 		catch(ParseException error)
