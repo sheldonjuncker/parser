@@ -14,7 +14,15 @@ class Node
 	TokenLocation location;
 
 	///Semantic info about the node
-	SemanticInfo semInfo = new SemanticInfo;
+	SemanticInfo semInfo;
+
+	/**
+	* Constructs the node.
+	*/
+	this()
+	{
+		semInfo = new SemanticInfo;
+	}
 
 	/**
 	* Writes anything with the correct number of tabs
@@ -41,6 +49,7 @@ class Node
 	*	The following method deal with semantic stuff:
 	*	void analyzeVariables() -- does semantic analysis on variables
 	*	bool isLvalue() -- determines if a node is an lvalue
+	*	void addUse() -- increments the times the variable is used
 	*/
 
 	/**
@@ -56,6 +65,41 @@ class Node
 	* Determines if a node is an lvalue.
 	*/
 	bool isLvalue()
+	{
+		return false;
+	}
+
+	/**
+	* Increments the number of times a node is used.
+	*/
+	void addUse(Environment e)
+	{
+
+	}
+
+
+	/*
+	*	The following method deal with optimizing stuff
+	*	isStatic() -- determines if a node's value can be known
+	*	at compile time.
+	*	hasEffect() -- determines whether a node has any effect
+	*/
+
+	/**
+	* Determines if a node's value can be computed at compile time.
+	*/
+	bool isStatic()
+	{
+		return false;
+	}
+
+	/**
+	* Determines if a node will have any effect.
+	* For example, these statements have no effect:
+	* 	5 + 5 * 5 / 5;
+	*	if(0) { writeln("Hello, world!"); }
+	*/
+	bool hasEffect()
 	{
 		return false;
 	}

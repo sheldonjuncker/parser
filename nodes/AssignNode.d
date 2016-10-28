@@ -23,18 +23,11 @@ class AssignNode : BinaryNode
 
 	override void analyzeVariables(Environment e)
 	{
-		//Increment assignments
-		//Have to do this first so that variables are
-		//assigned to before use
-		left.semInfo.assignments++;
-
 		super.analyzeVariables(e);
 
 		//Verify that the left side is an lvalue
 		if(!left.isLvalue())
 		{
-			//Decrement assignments
-			left.semInfo.assignments--;
 			throw new LvalueAssignmentException(location);
 		}
 	}

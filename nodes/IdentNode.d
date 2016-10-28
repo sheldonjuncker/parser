@@ -33,13 +33,13 @@ class IdentNode : Node
 			throw new VarUndeclaredException(ident, location);
 		}
 
-		//Verify that assignment was possible before uses
-		if(var.var.semInfo.assignments == 0)
-		{
-			throw new VarUninitException(ident, location);
-		}
+		//Add use to variable
+		addUse(e);
+	}
 
-		//Add uses to variable
-		var.var.semInfo.uses++;
+	override void addUse(Environment e)
+	{
+		//Increment uses of variable
+		e.getVar(ident).var.semInfo.uses++;
 	}
 }
