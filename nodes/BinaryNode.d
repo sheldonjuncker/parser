@@ -14,4 +14,10 @@ class BinaryNode : Node
 		this.left = left;
 		this.right = right;
 	}
+
+	override void analyzeVariables(Environment e)
+	{
+		left.analyzeVariables(e);
+		right.analyzeVariables(e);
+	}
 }

@@ -19,4 +19,9 @@ class NotNode : Node
 		right.print(tabs);
 		write(")");
 	}
+	
+	override void analyzeVariables(Environment e)
+	{
+		right.analyzeVariables(e);
+	}
 }

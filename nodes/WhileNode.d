@@ -23,4 +23,10 @@ class WhileNode : Node
 		writeTabs("", tabs);
 		stmt.print(tabs);
 	}
+	
+	override void analyzeVariables(Environment e)
+	{
+		cond.analyzeVariables(e);
+		stmt.analyzeVariables(e);
+	}
 }

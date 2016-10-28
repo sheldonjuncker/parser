@@ -1,6 +1,7 @@
 module parser.nodes.node;
 import lexer.token;
 import semantic.info;
+public import semantic.environment;
 import std.stdio;
 
 /**
@@ -33,5 +34,28 @@ class Node
 	void print(int tabs=0)
 	{
 		
+	}
+
+	/*
+	*	The following method deal with semantic stuff:
+	*	void analyzeVariables() -- does semantic analysis on variables
+	*	bool isLvalue() -- determines if a node is an lvalue
+	*/
+
+	/**
+	*	Analyzes variables for semantic correctness.
+	*	See semantic analyzer for more details.
+	*/
+	void analyzeVariables(Environment e)
+	{
+
+	}
+
+	/**
+	* Determines if a node is an lvalue.
+	*/
+	bool isLvalue()
+	{
+		return false;
 	}
 }

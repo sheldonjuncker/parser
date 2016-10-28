@@ -16,4 +16,9 @@ class IdentNode : Node
 	{
 		write(ident);
 	}	
+
+	override bool isLvalue()
+	{
+		return true;
+	}
 }

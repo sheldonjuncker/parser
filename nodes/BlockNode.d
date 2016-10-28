@@ -26,4 +26,12 @@ class BlockNode : Node
 		
 		writeTabs("}", tabs);
 	}
+	
+	override void analyzeVariables(Environment e)
+	{
+		foreach(Node node; stmts)
+		{
+			node.analyzeVariables(e);
+		}
+	}
 }

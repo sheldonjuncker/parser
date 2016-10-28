@@ -3,6 +3,7 @@ import parser.nodes.node;
 import parser.nodes.BinaryNode;
 import lexer.token;
 import std.stdio;
+import std.exception;
 
 class AssignNode : BinaryNode
 {
@@ -18,5 +19,16 @@ class AssignNode : BinaryNode
 		write(" = ");
 		right.print(tabs);
 		write(")");
+	}
+
+	override void analyzeVariables(Environment e)
+	{
+		super.analyzeVariables(e);
+
+		//Verify that the left side is an lvalue
+		if(!left.isLvalue())
+		{
+			throw new Exception("Assigning to non-lvalue.");
+		}
 	}
 }
