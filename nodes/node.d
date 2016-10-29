@@ -3,6 +3,8 @@ import lexer.token;
 import semantic.info;
 public import semantic.environment;
 public import semantic.exception;
+public import semantic.type;
+public import semantic.value;
 import std.stdio;
 
 /**
@@ -80,9 +82,9 @@ class Node
 
 
 	/*
-	*	The following method deal with optimizing stuff
+	*	The following methods deal with optimizing stuff
 	*	isStatic() -- determines if a node's value can be known
-	*	at compile time.
+	*	at compile time
 	*	hasEffect() -- determines whether a node has any effect
 	*/
 
@@ -92,6 +94,16 @@ class Node
 	bool isStatic()
 	{
 		return false;
+	}
+
+	/**
+	* Computes the value of a node if known at compile time.
+	* Returns a node that can be used to replace the node being analyzed.
+	* Example: AddNode(NumNode, NumNode) --> SemanticValue.value.num
+	*/
+	SemanticValue computeStaticValue()
+	{
+		return null;
 	}
 
 	/**

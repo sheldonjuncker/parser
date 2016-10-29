@@ -4,6 +4,7 @@ import lexer.token;
 import parser.all_nodes;
 import std.stdio;
 import std.exception;
+import std.conv;
 
 /**
 * This class represents a parse error.
@@ -921,7 +922,7 @@ class Parser
 			{
 				Token num = token();
 				next();
-				return new NumNode(location, num.lexeme);
+				return new NumNode(location, to!double(num.lexeme));
 			}
 
 			//Test for a parenthesized expression

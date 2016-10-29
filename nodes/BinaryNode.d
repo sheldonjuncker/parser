@@ -26,4 +26,26 @@ class BinaryNode : Node
 		//Only static if left-hand and right-hand sides are static
 		return left.isStatic() && right.isStatic();
 	}
+
+	override SemanticValue computeStaticValue()
+	{
+		//This won't be called unless we're static
+
+		//Compute values
+		SemanticValue leftValue = left.computeStaticValue();
+		SemanticValue rightValue = right.computeStaticValue();
+
+		//Assume we're working with numbers
+		double result = leftValue.value.num + rightValue.value.num;
+
+		//Create a new semantic type
+		SemanticType type = new SemanticType(DataType.Num);
+
+		//Add the result to the value
+		DataValue value;
+		value.num = result;
+
+		//Return the semantic value
+		return  new SemanticValue(type, value);
+	}
 }

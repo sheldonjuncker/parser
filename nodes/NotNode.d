@@ -29,4 +29,11 @@ class NotNode : Node
 	{
 		return right.isStatic();
 	}
+
+
+	override SemanticValue computeStaticValue()
+	{
+		//This won't be called unless we're static
+		return right.computeStaticValue();
+	}
 }
