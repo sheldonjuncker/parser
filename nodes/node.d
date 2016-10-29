@@ -71,6 +71,7 @@ class Node
 
 	/**
 	* Increments the number of times a node is used.
+	* Used for local variables.
 	*/
 	void addUse(Environment e)
 	{

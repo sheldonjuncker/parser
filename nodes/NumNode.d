@@ -17,4 +17,10 @@ class NumNode : Node
 	{
 		write(num);
 	}
+
+	override bool isStatic()
+	{
+		//We know the value of a number at compile time
+		return true;
+	}
 }

@@ -24,4 +24,9 @@ class NotNode : Node
 	{
 		right.analyzeVariables(e);
 	}
+
+	override bool isStatic()
+	{
+		return right.isStatic();
+	}
 }

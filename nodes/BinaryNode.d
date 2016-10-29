@@ -20,4 +20,10 @@ class BinaryNode : Node
 		left.analyzeVariables(e);
 		right.analyzeVariables(e);
 	}
+
+	override bool isStatic()
+	{
+		//Only static if left-hand and right-hand sides are static
+		return left.isStatic() && right.isStatic();
+	}
 }
