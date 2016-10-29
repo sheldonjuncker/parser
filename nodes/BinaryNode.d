@@ -15,6 +15,17 @@ class BinaryNode : Node
 		this.right = right;
 	}
 
+	override void each(void function(ref Node) action)
+	{
+		//Call action on each node
+		action(left);
+		action(right);
+
+		//Pass along to children
+		left.each(action);
+		right.each(action);
+	}
+
 	override void analyzeVariables(Environment e)
 	{
 		left.analyzeVariables(e);

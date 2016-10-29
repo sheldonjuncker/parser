@@ -24,6 +24,17 @@ class IfNode : Node
 		stmt.print(tabs);
 	}
 	
+	override void each(void function(ref Node) action)
+	{
+		//Perform action on condition and statement
+		action(cond);
+		action(stmt);
+
+		//Propogate
+		cond.each(action);
+		stmt.each(action);
+	}
+
 	override void analyzeVariables(Environment e)
 	{
 		cond.analyzeVariables(e);

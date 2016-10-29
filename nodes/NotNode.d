@@ -20,6 +20,13 @@ class NotNode : Node
 		write(")");
 	}
 	
+	override void each(void function(ref Node) action)
+	{
+		//Perform action on right node
+		action(right);
+		right.each(action);
+	}
+
 	override void analyzeVariables(Environment e)
 	{
 		right.analyzeVariables(e);

@@ -15,6 +15,7 @@ public import parser.nodes.LtNode;
 public import parser.nodes.ModNode;
 public import parser.nodes.MulNode;
 public import parser.nodes.NotNode;
+public import parser.nodes.NullNode;
 public import parser.nodes.NumNode;
 public import parser.nodes.OrNode;
 public import parser.nodes.SubNode;

@@ -15,6 +15,17 @@ class WhileNode : Node
 		this.stmt = stmt;
 	}
 
+	override void each(void function(ref Node) action)
+	{
+		//Perform action on condition and statement
+		action(cond);
+		action(stmt);
+
+		//Propogate
+		cond.each(action);
+		stmt.each(action);
+	}
+
 	override void print(int tabs=0)
 	{
 		write("while(");

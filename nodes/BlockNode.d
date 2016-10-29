@@ -27,6 +27,19 @@ class BlockNode : Node
 		writeTabs("}", tabs);
 	}
 	
+	override void each(void function(ref Node) action)
+	{
+		//Apply action to each nodes
+		foreach(ref Node node; stmts)
+		{
+			//Perform action
+			action(node);
+
+			//Propogate
+			node.each(action);
+		}
+	}
+
 	override void analyzeVariables(Environment e)
 	{
 		//Enter scope

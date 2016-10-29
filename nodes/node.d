@@ -47,6 +47,14 @@ class Node
 		
 	}
 
+	/**
+	* Calls a function on each node in the AST.
+	*/
+	void each(void function(ref Node) action)
+	{
+		
+	}
+
 	/*
 	*	The following method deal with semantic stuff:
 	*	void analyzeVariables() -- does semantic analysis on variables
