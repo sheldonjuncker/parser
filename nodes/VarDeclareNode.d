@@ -37,4 +37,9 @@ class VarDeclareNode : Node
 			throw new VarRedeclareException(name, location);
 		}
 	}
+
+	override bool hasEffect()
+	{
+		return semInfo.uses > 0;
+	}
 }

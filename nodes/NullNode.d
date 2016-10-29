@@ -8,5 +8,8 @@ import std.stdio;
 */
 class NullNode : Node
 {
-	
+	override bool isNull()
+	{
+		return true;
+	}
 }

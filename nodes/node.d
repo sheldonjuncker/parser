@@ -52,7 +52,15 @@ class Node
 	*/
 	void each(void function(ref Node) action)
 	{
-		
+
+	}
+
+	/**
+	* Determines if a node is a Null node.
+	*/
+	bool isNull()
+	{
+		return false;
 	}
 
 	/*
@@ -122,6 +130,6 @@ class Node
 	*/
 	bool hasEffect()
 	{
-		return false;
+		return true;
 	}
 }

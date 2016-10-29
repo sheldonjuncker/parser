@@ -19,6 +19,9 @@ class BlockNode : Node
 		
 		foreach(Node node; stmts)
 		{
+			if(node.isNull())
+				continue;
+			
 			writeTabs("", tabs + 1);
 			node.print(tabs + 1);
 			write(";\n");
